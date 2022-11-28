@@ -51,7 +51,7 @@ const FOV_ALGO: FovAlgorithm = FovAlgorithm::Basic; // default FOV algorithm
 const FOV_LIGHT_WALLS: bool = true; // light walls or not
 const TORCH_RADIUS: i32 = 10;
 
-const LIMIT_FPS: i32 = 20; // 20 frames-per-second maximum
+const LIMIT_FPS: i32 = 60; // 20 frames-per-second maximum
 
 const COLOR_DARK_WALL: Color = Color { r: 0, g: 0, b: 100 };
 const COLOR_LIGHT_WALL: Color = Color {
@@ -298,7 +298,7 @@ impl Object {
     pub fn equip(&mut self, messages: &mut Messages) {
         if self.item.is_none() {
             messages.add(
-                format!("Não pode desequipar {:?}, não é um item.", self),
+                format!("Nao pode desequipar {:?}, nao é um item.", self),
                 RED,
             );
             return;
@@ -313,7 +313,7 @@ impl Object {
             }
         } else {
             messages.add(
-                format!("Não pode desequipar {:?}, não é um equipamento.", self),
+                format!("Nao pode desequipar {:?}, nao é um equipamento.", self),
                 RED,
             );
         }
@@ -323,7 +323,7 @@ impl Object {
     pub fn dequip(&mut self, messages: &mut Messages) {
         if self.item.is_none() {
             messages.add(
-                format!("Não pode desequipar {:?}, não é um item.", self),
+                format!("Nao pode desequipar {:?}, nao é um item.", self),
                 RED,
             );
             return;
@@ -338,7 +338,7 @@ impl Object {
             }
         } else {
             messages.add(
-                format!("Não pode desequipar {:?}, não é um equipamento.", self),
+                format!("Nao pode desequipar {:?}, nao é um equipamento.", self),
                 RED,
             );
         }
@@ -427,7 +427,7 @@ fn pick_item_up(object_id: usize, game: &mut Game, objects: &mut Vec<Object>) {
     if game.inventory.len() >= 26 {
         game.messages.add(
             format!(
-                "Seu inventário está cheio, não é possível pegar {}.",
+                "Seu inventario esta cheio, nao é possível pegar {}.",
                 objects[object_id].name
             ),
             RED,
@@ -435,7 +435,7 @@ fn pick_item_up(object_id: usize, game: &mut Game, objects: &mut Vec<Object>) {
     } else {
         let item = objects.swap_remove(object_id);
         game.messages
-            .add(format!("Você pegou um {}!", item.name), GREEN);
+            .add(format!("Voce pegou um {}!", item.name), GREEN);
         let index = game.inventory.len();
         let slot = item.equipment.map(|e| e.slot);
         game.inventory.push(item);
@@ -566,7 +566,7 @@ fn ai_confused(
     } else {
         // restore the previous AI (this one will be deleted)
         game.messages.add(
-            format!("O {} já tá sóbrio!", objects[monster_id].name),
+            format!("O {} ja ta sóbrio!", objects[monster_id].name),
             RED,
         );
         *previous_ai
@@ -613,7 +613,7 @@ fn use_item(inventory_id: usize, tcod: &mut Tcod, game: &mut Game, objects: &mut
         }
     } else {
         game.messages.add(
-            format!("{} não pode ser usado.", game.inventory[inventory_id].name),
+            format!("{} nao pode ser usado.", game.inventory[inventory_id].name),
             WHITE,
         );
     }
@@ -626,7 +626,7 @@ fn drop_item(inventory_id: usize, game: &mut Game, objects: &mut Vec<Object>) {
     }
     item.set_pos(objects[PLAYER].x, objects[PLAYER].y);
     game.messages
-        .add(format!("Você derrubou um {}.", item.name), YELLOW);
+        .add(format!("Voce derrubou um {}.", item.name), YELLOW);
     objects.push(item);
 }
 
@@ -722,11 +722,11 @@ fn cast_heal(
     let player = &mut objects[PLAYER];
     if let Some(fighter) = player.fighter {
         if fighter.hp == player.max_hp(game) {
-            game.messages.add("Você já tá bão, deixa de frescura.", RED);
+            game.messages.add("Voce ja ta bem, deixa de frescura.", RED);
             return UseResult::Cancelled;
         }
         game.messages
-            .add("Suas feridas começam a sarar!", LIGHT_VIOLET);
+            .add("Suas feridas comecam a sarar!", LIGHT_VIOLET);
         player.heal(HEAL_AMOUNT, game);
         return UseResult::UsedUp;
     }
@@ -745,7 +745,7 @@ fn cast_lightning(
         // zap it!
         game.messages.add(
             format!(
-                "Um trovão cai na cabeça de {}! \
+                "Um trovao cai na cabeca de {}! \
                  Causando um dano de {} pontos de vida.",
                 objects[monster_id].name, LIGHTNING_DAMAGE
             ),
@@ -771,7 +771,7 @@ fn cast_confuse(
 ) -> UseResult {
     // ask the player for a target to confuse
     game.messages.add(
-        "Clique com o botão esquerdo em um inimigo para embebedá-lo, ou botão direito para cancelar.",
+        "Clique com o botao esquerdo em um inimigo para embebeda-lo, ou botao direito para cancelar.",
         LIGHT_CYAN,
     );
     let monster_id = target_monster(tcod, game, objects, Some(CONFUSE_RANGE as f32));
@@ -785,7 +785,7 @@ fn cast_confuse(
         });
         game.messages.add(
             format!(
-                "Os olhos de {} parecem confusos, andando como um bêbado!",
+                "Os olhos de {} parecem confusos, andando como um bebado!",
                 objects[monster_id].name
             ),
             LIGHT_GREEN,
@@ -807,7 +807,7 @@ fn cast_fireball(
 ) -> UseResult {
     // ask the player for a target tile to throw a fireball at
     game.messages.add(
-        "Clique com o botão esquerdo em um local para jogar fogo, ou botão direito para cancelar.",
+        "Clique com o botao esquerdo em um local para jogar fogo, ou botao direito para cancelar.",
         LIGHT_CYAN,
     );
     let (x, y) = match target_tile(tcod, game, objects, None) {
@@ -887,9 +887,9 @@ enum Slot {
 impl std::fmt::Display for Slot {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
-            Slot::LeftHand => write!(f, "Mão Esquerda"),
-            Slot::RightHand => write!(f, "Mão Direita"),
-            Slot::Head => write!(f, "Cabeça"),
+            Slot::LeftHand => write!(f, "Mao Esquerda"),
+            Slot::RightHand => write!(f, "Mao Direita"),
+            Slot::Head => write!(f, "Cabeca"),
         }
     }
 }
@@ -1179,7 +1179,7 @@ fn place_objects(room: Rect, map: &Map, objects: &mut Vec<Object>, level: u32) {
                 Item::Lightning => {
                     // create a lightning bolt scroll
                     let mut object =
-                        Object::new(x, y, '#', "Pergaminho do Trovão", LIGHT_YELLOW, false);
+                        Object::new(x, y, '#', "Pergaminho do Trovao", LIGHT_YELLOW, false);
                     object.item = Some(Item::Lightning);
                     object
                 }
@@ -1233,14 +1233,14 @@ fn place_objects(room: Rect, map: &Map, objects: &mut Vec<Object>, level: u32) {
 /// Advance to the next level
 fn next_level(tcod: &mut Tcod, game: &mut Game, objects: &mut Vec<Object>) {
     game.messages.add(
-        "Você toma um tempo para descansar e recupera suas forças.",
+        "Voce toma um tempo para descansar e recupera suas forcas.",
         VIOLET,
     );
     let heal_hp = objects[PLAYER].max_hp(game) / 2;
     objects[PLAYER].heal(heal_hp, game);
 
     game.messages.add(
-        "Enfim um momento de paz, você desce nas profundezas da masmorra...",
+        "Enfim um momento de paz, voce desce nas profundezas da masmorra...",
         RED,
     );
     game.dungeon_level += 1;
@@ -1507,7 +1507,7 @@ fn menu<T: AsRef<str>>(header: &str, options: &[T], width: i32, root: &mut Root)
 fn inventory_menu(inventory: &[Object], header: &str, root: &mut Root) -> Option<usize> {
     // how a menu with each item of the inventory as an option
     let options = if inventory.len() == 0 {
-        vec!["Inventário cheio.".into()]
+        vec!["Inventario cheio.".into()]
     } else {
         inventory
             .iter()
@@ -1612,7 +1612,7 @@ fn handle_keys(tcod: &mut Tcod, game: &mut Game, objects: &mut Vec<Object>) -> P
             // show the inventory: if an item is selected, use it
             let inventory_index = inventory_menu(
                 &game.inventory,
-                "Pressione 'd' perto de um item para derrubá-lo, ou outro para cancelar.\n'",
+                "Pressione 'd' perto de um item para derruba-lo, ou outro para cancelar.\n'",
                 &mut tcod.root,
             );
             if let Some(inventory_index) = inventory_index {
@@ -1625,7 +1625,7 @@ fn handle_keys(tcod: &mut Tcod, game: &mut Game, objects: &mut Vec<Object>) -> P
             // show the inventory; if an item is selected, drop it
             let inventory_index = inventory_menu(
                 &game.inventory,
-                "Pressione 'd' perto de um item para derrubá-lo, ou outro para cancelar.\n'",
+                "Pressione 'd' perto de um item para derruba-lo, ou outro para cancelar.\n'",
                 &mut tcod.root,
             );
             if let Some(inventory_index) = inventory_index {
@@ -1652,13 +1652,13 @@ fn handle_keys(tcod: &mut Tcod, game: &mut Game, objects: &mut Vec<Object>) -> P
             let level_up_xp = LEVEL_UP_BASE + player.level * LEVEL_UP_FACTOR;
             if let Some(fighter) = player.fighter.as_ref() {
                 let msg = format!(
-                    "Informações do Personagem
+                    "Informacoes do Personagem
 
 Nível: {}
-Experiência: {}
-Experiência para próximo nível: {}
+Experiencia: {}
+Experiencia para próximo nível: {}
 
-PV máximo: {}
+PV maximo: {}
 Ataque: {}
 Defesa: {}",
                     level,
@@ -1687,7 +1687,7 @@ fn level_up(tcod: &mut Tcod, game: &mut Game, objects: &mut [Object]) {
         player.level += 1;
         game.messages.add(
             format!(
-                "Você fica mais forte! Você chegou ao nível {}!",
+                "Voce fica mais forte! Voce chegou ao nível {}!",
                 player.level
             ),
             YELLOW,
@@ -1700,7 +1700,7 @@ fn level_up(tcod: &mut Tcod, game: &mut Game, objects: &mut [Object]) {
                 "Aumento de nível! Escolha um atribuito para aumentar:\n",
                 &[
                     format!("Vida (+20 PV [{}]))", fighter.base_max_hp),
-                    format!("Força (+1 ataque [{}]))", fighter.base_power),
+                    format!("Forca (+1 ataque [{}]))", fighter.base_power),
                     format!("Agilidade (+1 defesa [{}]))", fighter.base_defense),
                 ],
                 LEVEL_SCREEN_WIDTH,
@@ -1733,7 +1733,7 @@ enum PlayerAction {
 
 fn player_death(player: &mut Object, game: &mut Game) {
     // the game ended!
-    game.messages.add("Você morreu!", RED);
+    game.messages.add("Voce morreu!", RED);
 
     // for added effect, transform the player into a corpse!
     player.char = '%';
@@ -1745,7 +1745,7 @@ fn monster_death(monster: &mut Object, game: &mut Game) {
     // attacked and doesn't move
     game.messages.add(
         format!(
-            "{} morreu! Você ganhou {} pontos de experiência.",
+            "{} morreu! Voce ganhou {} pontos de experiencia.",
             monster.name,
             monster.fighter.unwrap().xp
         ),
@@ -1902,7 +1902,7 @@ fn main_menu(tcod: &mut Tcod) {
             SCREEN_HEIGHT - 2,
             BackgroundFlag::None,
             TextAlignment::Center,
-            "By Ângelo",
+            "Por Angelo",
         );
 
         // show options and wait for the player's choice
@@ -1923,7 +1923,7 @@ fn main_menu(tcod: &mut Tcod) {
                         play_game(tcod, &mut game, &mut objects);
                     }
                     Err(_e) => {
-                        msgbox("\nNão existem jogos salvos.\n", 24, &mut tcod.root);
+                        msgbox("\nNao existem jogos salvos.\n", 24, &mut tcod.root);
                         continue;
                     }
                 }
